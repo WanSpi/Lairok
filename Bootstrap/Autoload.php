@@ -14,11 +14,16 @@
         continue;
       }
 
-      $relativeClass = substr($class, $len);
-      $file = $baseDir . str_replace('\\', '/', $relativeClass) . '.php';
+      $relativeClass = str_replace('\\', '/', substr($class, $len));
+      $filePath = $baseDir . $relativeClass;
 
-      if (file_exists($file)) {
-        require_once $file;
+      if (file_exists($filePath . '.php')) {
+        require_once $filePath . '.php';
+      } else if (
+        preg_match('/([^\/]+)$/', $relativeClass, $match) &&
+        file_exists($filePath .= '/' . $match[1] . '.php')
+      ) {
+        require_once $filePath;
       }
     }
   });
